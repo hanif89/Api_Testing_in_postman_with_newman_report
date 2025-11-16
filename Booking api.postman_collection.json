@@ -1,0 +1,574 @@
+{
+	"info": {
+		"_postman_id": "d0265a5c-ac14-4d7c-adda-3d5caa793685",
+		"name": "Booking api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27460669",
+		"_collection_link": "https://dark-moon-475437.postman.co/workspace/First-api~84048d20-7284-4c02-adc4-a218a6a28475/collection/27460669-d0265a5c-ac14-4d7c-adda-3d5caa793685?action=share&source=collection_link&creator=27460669"
+	},
+	"item": [
+		{
+			"name": "Get booking",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/booking",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateBooking",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseData = pm.response.json();\r",
+							"console.log(responseData);\r",
+							"\r",
+							"pm.environment.set(\"id\",responseData.bookingid);\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var firstName = pm.variables.replaceIn(\"{{$randomFirstName}}\")\r",
+							"console.log(firstName);\r",
+							"pm.environment.set(\"firstName\",firstName);\r",
+							"\r",
+							"var lastName = pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
+							"console.log(lastName);\r",
+							"pm.environment.set(\"lastName\",lastName);\r",
+							"\r",
+							"var totalprice = pm.variables.replaceIn(\"{{$randomInt}}\")\r",
+							"console.log(totalprice);\r",
+							"pm.environment.set(\"tootalprice\",totalprice);\r",
+							"\r",
+							"var depositpaid = pm.variables.replaceIn(\"{{$randomBoolean}}\")\r",
+							"console.log(depositpaid);\r",
+							"pm.environment.set(\"dpaid\",depositpaid);\r",
+							"\r",
+							"const in_date = require ('moment')\r",
+							"const check_in_date = in_date()\r",
+							"var checkin_date = check_in_date.format(\"YYYY-MM-DD\")\r",
+							"pm.environment.set(\"check_in_date\",checkin_date);\r",
+							"\r",
+							"const out_date = require ('moment')\r",
+							"const check_out_date = out_date()\r",
+							"var checkout_date = check_out_date.add(4,'d').format(\"YYYY-MM-DD\")\r",
+							"pm.environment.set(\"check_out_date\",checkout_date);\r",
+							"\r",
+							"var depositpaid = pm.variables.replaceIn(\"{{$randomBoolean}}\")\r",
+							"console.log(depositpaid);\r",
+							"pm.environment.set(\"dpaid\",depositpaid);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"{{firstName}}\",\r\n    \"lastname\" : \"{{lastName}}\",\r\n    \"totalprice\" : {{tootalprice}},\r\n    \"depositpaid\" : {{dpaid}},\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"{{check_in_date}}\",\r\n        \"checkout\" : \"{{check_out_date}}\"\r\n    },\r\n    \"additionalneeds\" : \"Dinner\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/booking",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getbookinID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var status_code = pm.response.code\r",
+							"console.log(status_code)\r",
+							"if(status_code==200){\r",
+							"var responseData = pm.response.json()\r",
+							"console.log(responseData)\r",
+							"\r",
+							"pm.test(\"First Name Check \",function(){\r",
+							"pm.expect(pm.environment.get(\"fName\")).to.eql(responseData.firstName)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Last Name Check \",function(){\r",
+							"pm.expect(pm.environment.get(\"LName\")).to.eql(responseData.lastName)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Total Price Check \",function(){\r",
+							"    pm.expect(pm.environment.get(\"tootalprice\")).to.eql(responseData.totalprice.toString())\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Deposit Paid Check \",function(){\r",
+							"    pm.expect(pm.environment.get(\"dpaid\")).to.eql(responseData.depositpaid.toString())\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check in Date \",function(){\r",
+							"    pm.expect(pm.environment.get(\"check_in_date\")).to.eql(responseData.bookingdates.checkin)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Check out Date \",function(){\r",
+							"    pm.expect(pm.environment.get(\"check_out_date\")).to.eql(responseData.bookingdates.checkout)\r",
+							"})\r",
+							"}\r",
+							"else if(status_code==404){\r",
+							"    pm.test(\"ID expired\")\r",
+							"}\r",
+							"else if(status_code==402){\r",
+							"    pm.test(\"Token Expired\")\r",
+							"}\r",
+							"else{\r",
+							"    pm.test(\"Something went wrong\")\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base_url}}/booking/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get_booking",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/{{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var responseData = pm.response.json();\r",
+							"console.log(responseData);\r",
+							"\r",
+							"pm.environment.set(\"token\",responseData.token);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\" : \"admin\",\r\n    \"password\" : \"password123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/auth",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UpdateBookingID",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var firstName = pm.variables.replaceIn(\"{{$randomFirstName}}\")\r",
+							"console.log(firstName);\r",
+							"pm.environment.set(\"firstName\",firstName);\r",
+							"\r",
+							"var lastName = pm.variables.replaceIn(\"{{$randomLastName}}\")\r",
+							"console.log(lastName);\r",
+							"pm.environment.set(\"lastName\",lastName);\r",
+							"\r",
+							"const in_date = require ('moment')\r",
+							"const check_in_date = in_date()\r",
+							"var checkin_date = check_in_date.format(\"YYYY-MM-DD\")\r",
+							"pm.environment.set(\"check_in_date\",checkin_date)\r",
+							"\r",
+							"const out_date = require ('moment')\r",
+							"const check_out_date = out_date()\r",
+							"var checkout_date = check_out_date.add(4,'d').format(\"YYYY-MM-DD\")\r",
+							"pm.environment.set(\"check_out_date\",checkout_date)"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Cookie",
+						"value": "token={{token}}",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"James\",\r\n    \"lastname\" : \"Brown\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/booking/688",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"booking",
+						"688"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "token=b9d691181e62315",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking/{{id}}",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "curl_create_booking",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "firstname",
+							"value": "Jim",
+							"type": "text"
+						},
+						{
+							"key": "lastname",
+							"value": "Brown",
+							"type": "text"
+						},
+						{
+							"key": "totalprice",
+							"value": "111",
+							"type": "text"
+						},
+						{
+							"key": "depositpaid",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "bookingdates[checkin]",
+							"value": "2018-01-01",
+							"type": "text"
+						},
+						{
+							"key": "bookingdates[checkout]",
+							"value": "2018-01-02",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \\\r\n  https://restful-booker.herokuapp.com/booking \\\r\n  -H 'Content-Type: application/x-www-form-urlencoded' \\\r\n  -d 'firstname=Jim&lastname=Brown&totalprice=111&depositpaid=true&bookingdates%5Bcheckin%5D=2018-01-01&bookingdates%5Bcheckout%5D=2018-01-02'"
+			},
+			"response": []
+		},
+		{
+			"name": "curl_update_booking",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Accept",
+						"value": "application/x-www-form-urlencoded"
+					},
+					{
+						"key": "Authorization",
+						"value": "Basic YWRtaW46cGFzc3dvcmQxMjM="
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "firstname",
+							"value": "Jim",
+							"type": "text"
+						},
+						{
+							"key": "lastname",
+							"value": "Brown",
+							"type": "text"
+						},
+						{
+							"key": "totalprice",
+							"value": "111",
+							"type": "text"
+						},
+						{
+							"key": "depositpaid",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "bookingdates[checkin]",
+							"value": "2018-01-01",
+							"type": "text"
+						},
+						{
+							"key": "bookingdates[checkout]",
+							"value": "2018-01-02",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking/1",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking",
+						"1"
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \\\r\n  https://restful-booker.herokuapp.com/booking/1 \\\r\n  -H 'Content-Type: application/x-www-form-urlencoded' \\\r\n  -H 'Accept: application/x-www-form-urlencoded' \\\r\n  -H 'Authorization: Basic YWRtaW46cGFzc3dvcmQxMjM=' \\\r\n  -d 'firstname=Jim&lastname=Brown&totalprice=111&depositpaid=true&bookingdates%5Bcheckin%5D=2018-01-01&bookingdates%5Bcheckout%5D=2018-01-02'"
+			},
+			"response": []
+		},
+		{
+			"name": "booking_curl",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Cookie",
+						"value": "token=abc123"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"firstname\" : \"James\",\r\n    \"lastname\" : \"Brown\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://restful-booker.herokuapp.com/booking/1",
+					"protocol": "https",
+					"host": [
+						"restful-booker",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"booking",
+						"1"
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \\\r\n  https://restful-booker.herokuapp.com/booking/1 \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'Accept: application/json' \\\r\n  -H 'Cookie: token=abc123' \\\r\n  -d '{\r\n    \"firstname\" : \"James\",\r\n    \"lastname\" : \"Brown\",\r\n    \"totalprice\" : 111,\r\n    \"depositpaid\" : true,\r\n    \"bookingdates\" : {\r\n        \"checkin\" : \"2018-01-01\",\r\n        \"checkout\" : \"2019-01-01\"\r\n    },\r\n    \"additionalneeds\" : \"Breakfast\"\r\n}'"
+			},
+			"response": []
+		}
+	]
+}
